@@ -1,0 +1,46 @@
+
+
+--show everything in book
+select * from Book;
+
+--select fields in a table
+select type, title, paperback
+from book;
+
+select AuthorFirst as fname, AuthorLast as lname
+from author aut;
+--write from line before popoulating select line
+--autocorrect fieldnames
+
+select Title, Type, PublisherCode
+from book
+order by title;
+
+--sort by title within type
+select type, publishercode, title
+from book
+order by type, title;
+
+--strings are stored in ' not "
+select * from book where Paperback = 'Y';
+
+--and == &&
+--or == ||
+select * from book where Paperback = 'Y' and PublisherCode = 'P1';
+
+--tables automatically sorted by index
+--BookCode is a primary key, index is automatically built for PK
+select * from book
+where type = 'HOR' or type = 'SFI'
+
+--want horror, sfi paperback books
+select Title, Type, Paperback
+from book
+where (type = 'HOR' or type = 'SFI') and paperback = 'Y'
+
+select * from copy
+where price > 20
+
+select * from copy
+--where price >= 10 and price <= 20
+where price between 10 and 20
