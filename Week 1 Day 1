@@ -47,4 +47,4 @@ where price > 20
 
 select * from copy
 --where price >= 10 and price <= 20
-where price between 10 and 20
+where price between 10 and 20;
