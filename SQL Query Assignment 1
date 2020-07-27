@@ -1,0 +1,75 @@
+Queries
+
+If I do not specify a field list, use * for the field list. For each query, I have specified the number of rows you should see
+
+1. List the customernum and customername of all customers. -- 10 rows 
+
+2. List the complete part table, sorted by description. -- 10 rows 
+
+3. List the class, description, onhand, price for all parts sorted by description within class (sort by class first) -- 10 records, AP dishwasher will be first 
+
+4. List the class, description, onhand, price for all parts that cost more than $400 -- 4 rows 
+
+5. List the customername, customernum, repnum and creditlimit of all customers that are represented by sales rep 35 or have a credit limit of 10000. Sort by customerName -- 6 rows, Bargains Galore first 
+
+6. List the customername and customernum of all customers that are represented by sales rep 35 and have a credit limit of $10,000. Sort by customerName -- 1 row 
+
+7. List the name, number, and balance of all customers represented by Juan Perez. Order by balance. Hint - list the fields in table rep and find Juan's number. Then use this in the where clause. -- 3 rows, Johnson's will be first
+
+8. List the all fields in the orders table that were placed on 10/20/2007. Dates are stored and queried in this format -- 2 rows 
+
+9. Display the parts that cost between 129.95 and 500. Display in descending order by price -- 6 rows, gas range will be first 
+
+10. Display the parts that are not in the SG class. -- 8 rows 
+
+-- 1
+select CustomerNum, CustomerName
+from Customer;
+
+-- 2
+select * from Part
+order by Description;
+
+-- 3
+select Class, Description, Onhand, Price
+from Part
+order by Class, Description;
+
+-- 4
+select Class, Description, Onhand, Price
+from Part
+where Price > 400;
+
+-- 5
+select CustomerName, CustomerNum, RepNum, CreditLimit
+from Customer
+where RepNum = 35 or CreditLimit = 10000
+order by CustomerName;
+
+-- 6
+select CustomerName, CustomerNum
+from Customer
+where RepNum = 35 and CreditLimit = 10000
+order by CustomerName;
+
+-- 7
+select RepNum
+from Rep
+where FirstName = 'Juan';
+select CustomerName, CustomerNum, Balance
+from Customer
+where RepNum = 65
+order by Balance;
+
+-- 8
+select * from Orders
+where OrderDate = '2007-10-20';
+
+-- 9
+select * from Part
+where Price between 129.95 and 500
+order by price DESC;
+
+-- 10
+select * from Part
+where Class != 'SG';
