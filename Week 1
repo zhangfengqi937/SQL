@@ -1,4 +1,8 @@
-
+--this is a comment
+--select - choose fields
+--from   - choose tables
+--where  - conditions to search for
+--order by - sort by a column
 
 --show everything in book
 select * from Book;
