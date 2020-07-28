@@ -1,0 +1,110 @@
+--where type in ('FIC', 'MYS') and paperback = 'N'
+select title, type
+from book
+where type='FIC' or type='MYS' and Paperback = 'N';
+
+--avoid !=, not consistent across SQL verisons
+select title, type, Paperback
+from book
+where NOT type in('FIC', 'MYS') and Paperback = 'Y'
+order by title
+
+--pattern matching
+--like regular expressions
+--use wildcards or operators to match letters, numbers...
+select title from book
+where title = 'Harry Potter and the Prisoner of Azkaban'
+or
+title = 'Harry Potter and the Goblet of Fire';
+--like pattern matching
+--% for 0 to many characters
+--? for 1 character
+select title from book
+where title like 'Harry%';
+--[] for list or range of characters
+select title from book
+--where title like '[aeiou]%'
+where title like '[a-f]%';
+
+--find books ending in house
+select title from book
+--where title like '[aeiou]%'
+where title like '%house';
+--find the word 'and' in the title
+select title from book where title like '% and %';
+
+--calculated fields
+--calculate the eax on price
+select price * 0.07 as salesTax,
+price * 1.07 as fullPirce,
+bookCode, Quality
+from copy;
+
+--string manipulation
+--concatenation is simply +
+select authorFirst, authorLast, 
+trim(authorFirst) + ' ' + trim(authorLast) as fullName
+from Author
+order by authorFirst;
+
+select trim(authorLast) + ', ' + trim(authorFirst) as fullName
+from Author
+order by authorLast, authorFirst;
+
+--string types in SQL
+--char		string of size X
+--varchar	string of size upto X
+--nchar		n --> unicode
+--nvarchar	like emoji
+
+--calculated fields
+--select expression as newName
+--from table
+
+--aggregate functions
+--aggregate means overall, nor individual values
+--sum, max, min, avg, count
+
+--avg price of books
+--count(*) means count records
+--count(price) - count prices, ignores null fields
+select avg(price) as avgPrice, max(price) as maxPrice,
+min(price) as minPrice, count(*) as numBooks
+from copy
+select price from copy
+order by price;
+
+--distinct suppresses repeated output in a field
+select distinct quality from copy
+order by quality
+select quality, avg(price) as avgPrice, max(price) as maxPrice,
+min(price) as minPrice, count(*) as numBooks
+from copy
+group by quality;
+
+--use group by to have a table of aggregate values
+--select X, aggregate functions
+--from table 
+--group by X
+
+--how many books by type
+select type, count(*) as numBooks
+from book
+group by type;
+
+--only want to list types with three or more books
+--having condition
+--having allows you to build a condition on aggregate values
+--where allows you to build a condition on a field
+
+select type, count(*) as numBooks
+from book
+group by type
+having count(*) >= 3;
+
+--aggregate using where clauses
+--how many books and types does PE have?
+select type, count(*) as numBooks
+from book
+where PublisherCode = 'PE' --filter and keep desired elements
+group by type;
