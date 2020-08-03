@@ -1,0 +1,124 @@
+--incorrect
+select count(*) as numbooks, avg(price) as avgPrice
+from copy
+group by branchnum
+
+--correct
+select branchnum, count(*) as numbooks, avg(price) as avgPrice
+from copy
+group by branchnum
+
+select publishercode, count(*) as numBooks
+from book
+group by PublisherCode
+
+--Relational Database Management System
+--Relationships create connections between records and fields
+--Fields that repeat across tables tend to be in a relationship
+	--On one side = Primany key
+	--Other side foreign key
+--Primary key (PK)
+	--Unique field in a table
+	--Each table should have a primary key
+--Foreign key (FK)
+	--Match to a primary key in another table
+	--Each FK will have a matching PK - when done correctly 
+		--Referential integrity
+--Joins
+	--PK -> FK matchup
+	--Where FK in a table matches the PK in another table
+	--Able to combine the records in the tables
+--Exceptions to the matching fields
+	--Zip code
+	--Phone number
+	--Fname, Lname
+--Use your ER diagrams
+--Junction table
+	--Table between other tables
+  --Has more than one many link out
+  --
+
+select * from Publisher
+
+select * from Book
+
+--joining tables
+--correct join
+select bookcode, title, PublisherName, book.PublisherCode
+										--solve ambiguous field problem
+from book join Publisher
+on book.PublisherCode = Publisher.PublisherCode
+
+--old stype - where join
+select bookcode, title, PublisherName
+from book, Publisher
+where book.PublisherCode = Publisher.PublisherCode
+
+--join branch to copy
+--how to rename tables for shortening code
+select title, bo.BookCode, quality, price, branchname, BranchLocation,
+price * 1.07 as salePrice
+from copy c join branch br --rename copy to c, branch to br
+on br.BranchNum = c.BranchNum
+join book bo		--once renamed, you must use rename in the query
+on bo.BookCode = c.BookCode
+order by title
+
+--select * from Branch
+select BranchName, count(*) as numbooks, avg(price) as avgPrice
+from copy join branch
+on copy.BranchNum = Branch.BranchNum
+group by BranchName
+
+--list title and author name
+select title, authorfirst, authorlast
+from book bo join wrote wr
+on bo.BookCode = wr.BookCode
+join author au on au.AuthorNum = wr.AuthorNum
+order by authorlast, authorfirst
+--if sorting, display the sorted fields as the first column
+
+--display authorname, branchname, title, pubname
+select authorlast, authorfirst, title, PublisherName, BranchName
+from book bo join wrote wr
+on bo.BookCode = wr.BookCode
+join author au on au.AuthorNum = wr.AuthorNum
+join Publisher pu on pu.PublisherCode = bo.PublisherCode
+join copy co on co.BookCode = bo.BookCode
+join branch br on br.BranchNum = co.BranchNum
+order by AuthorFirst, AuthorLast
+
+--join == inner join
+--match PK to FK and display the matching rows
+--inner is defalut
+
+--outer joins
+--show matches and non matches 
+--full outer join - show macthed FK and PK, and unmatched FK, PK
+--find unmatched
+--use to find both the matches and the non matches
+
+select Publishername, bookcode
+from Publisher full outer join book
+on Publisher.PublisherCode = book.PublisherCode
+where bookcode is null or publishername is null
+order by publishername
+--anything that is null in bookcode indicates
+--that the publisher does not have a book
+insert into book values('1234', 'Lee is cool', null, 'FIC', 'Y')
+
+--left and right outer joins
+--left shows stuff from the left table
+--items in the left table without a match in the right table
+select publishername, bookcode
+from publisher left outer join book
+on Publisher.PublisherCode = book.PublisherCode
+where bookcode is null or PublisherName is null
+order by PublisherName
+
+--find authors without books
+select au.AuthorNum, AuthorFirst, AuthorLast, bookcode
+from author au left outer join wrote wr
+on au.AuthorNum = wr.AuthorNum
+where bookcode is null
+
