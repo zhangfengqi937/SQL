@@ -120,5 +120,5 @@ order by PublisherName
 select au.AuthorNum, AuthorFirst, AuthorLast, bookcode
 from author au left outer join wrote wr
 on au.AuthorNum = wr.AuthorNum
-where bookcode is null
+where bookcode is null 
 
