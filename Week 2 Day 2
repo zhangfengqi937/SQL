@@ -1,0 +1,111 @@
+select * from book
+full outer join Publisher
+on book.PublisherCode = Publisher.PublisherCode
+
+delete from book
+where title = 'Lee is cool'
+
+insert into book values('xxxx', 'oops', 'QQQ', null, null);
+delete from book
+where title = 'oops'
+
+--referential integrity
+--cannot add a FK to a table without a matching PK in the related table
+--alter adjusts objects like table
+--create makes objects
+--drop deletes objects
+
+--add a foreign key to book
+alter table book
+add constraint fk_book_pub
+foreign key(publishercode)			--key in the current table
+references publisher(publishercode)	--table with PK (pk)
+
+--FK on wrote to author
+alter table wrote
+add constraint fk_wrote_author
+foreign key(authorNum)
+references author(authorNum)
+
+--FK on wrote to book
+alter table wrote
+add constraint fk_wrote_book
+foreign key(bookCode)
+references book(bookCode)
+
+--FK on copy to book
+alter table copy
+add constraint fk_copy_book
+foreign key(bookCode)
+references book(bookCode)
+
+--FK on copy to branch
+alter table copy
+add constraint fk_copy_branch
+foreign key(branchnum)
+references branch(branchnum)
+
+select title,Publishername
+from book join Publisher
+on book.PublisherCode = Publisher.PublisherCode
+
+select * from book
+
+--drop table genre
+create table genre(
+	type char(3) primary key,
+	typeName varchar(20) not null,
+	description varchar(200) null
+);
+
+select distinct type from book
+insert into genre values('ART', 'Art and sculpture', null);
+insert into genre values('CMP', 'Computers', null);
+insert into genre values('FIC', 'Fiction', 'Made up story');
+insert into genre values('HOR', 'Horror', null);
+insert into genre values('MYS', 'Mystery', null);
+insert into genre values('PHI', 'Philosophy', null);
+insert into genre values('POE', 'Poetry', null);
+insert into genre values('PSY', 'Psychology', null);
+insert into genre values('SCI', 'Science and Nature', null);
+insert into genre values('SFI', 'Science Fiction', null);
+insert into genre values('TRA', 'Travel', null);
+insert into genre values('HIS', 'Hisotry', null);
+
+select * from genre
+
+alter table book
+add constraint fk_book_genre
+foreign key(type)
+references genre(type)
+
+--add a book with a different type
+--add the genre, then add the book
+insert into genre values('MNG', 'Manga', 'Drawings read from the back of the book to the front');
+insert into book values('4532', 'Bearzerk', 'PE', 'MNG', 'Y')
+
+select title, typeName, description
+from book b join genre g
+on b.type = g.type
+
+--update changes values in a field
+update book
+set title = 'Berserk'
+where title = 'Berzerk'
+
+--create PK, FK and table at one time
+create table magazine(
+	magID int primary key,
+	magazineName nvarchar(200) not null,
+	type char(3) foreign key(type) references genre(type)
+);
+
+insert into magazine values(1, 'Amazing Stroies', 'SFI')
+insert into magazine values(2, 'Smithsonian', 'HIS')
+insert into magazine values(3, '.NET Programmer', 'SCI')
+
+select * from magazine
+
+update magazine
+set type = 'CMP'
+where magID = 3
