@@ -1,0 +1,97 @@
+select title, price, price * .07 as tax--, price + tax as total
+from book join copy on book.BookCode = copy.BookCode
+where price > 11.95
+
+select avg(price) as average from copy
+
+--nest the average query in the where
+select title, price, price * .07 as tax--, price + tax as total
+from book join copy on book.BookCode = copy.BookCode
+where price > (select avg(price) as average from copy)
+-- >, <, ... nested query must return one value
+-- can be expensive
+
+--nested query returns more than one value
+--IN SQL keyword
+
+select * from book
+--where type = 'FIC' or type='MYS' or type='HOR' or type='SFI'
+where type in ('FIC', 'MYS', 'HOR', 'SFI')
+
+--show books in branch 'Henry Downtown' = branchnum 1
+select * from branch;
+
+--avoid join
+select title
+from book
+where bookcode in (select bookcode from copy where branchnum = 1)
+--nested query with in can only return one field
+
+--show books published in New York or Boston
+select title
+from book
+where PublisherCode in (select publishercode from publisher
+where city = 'New York' or City='Boston')
+
+--sub queries in the from line
+--build a table in RAM
+--join to the temp table
+--usually used for complex calculations
+
+select title, price, tax, price + tax as totPrice
+from book join (select bookcode, price, price *.07 as tax from copy) as priceCalc
+on book.BookCode = pricecalc.BookCode
+
+--title, bookcode, number of books in inventory
+
+select title, numbooks, avgPrice, numbooks * avgPrice as invCost
+from book join
+(select bookcode, count(*) as numBooks, avg(price) as avgPrice from copy
+group by bookcode) as bookCount
+on book.BookCode = bookCount.BookCode
+
+--titles with more than one author
+select bookcode
+from wrote
+group by bookcode
+having count(*) > 1
+
+select title, numAuthors
+from book join 
+(select bookcode, count(*) as numAuthors
+from wrote
+group by bookcode
+having count(*) > 1) as manyAuthor
+on book.BookCode = manyAuthor.BookCode
+
+--list books and authors for books with more than one author
+--nest in the where clause
+select title, authorlast, authorFirst
+from book join wrote on book.BookCode = wrote.BookCode
+join author on author.AuthorNum = wrote.AuthorNum
+where book.bookcode in (select bookcode from wrote group by bookcode having count(*) > 1)
+order by title
+
+
+--create variables
+declare @avgPrice as decimal(8,2)
+
+--set variable
+--set @avgPrice = 11.95
+
+--set variable in the select line
+select @avgPrice = avg(price)
+from copy
+
+select * from copy
+where price > @avgPrice
+
+--calculate the difference from average
+select title, b.bookcode, quality, price, 
+	price - @avgPrice as distanceFromAvg
+from book b join copy c on b.BookCode = c.BookCode
+
+--use the abs function for absolute value
+select title, b.bookcode, quality, price, 
+	abs(price - @avgPrice) as distanceFromAvg
+from book b join copy c on b.BookCode = c.BookCode
