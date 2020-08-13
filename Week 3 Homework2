@@ -1,0 +1,69 @@
+--1 
+select Name, ListPrice
+from Production.Product
+where ListPrice > 150
+
+--2
+select * from Production.Product
+where Color != 'NULL'
+
+--3
+select pp.ProductID, sum(Quantity) as totalInventory
+from Production.Product pp
+join Production.ProductInventory ppi
+on pp.ProductID = ppi.ProductID
+group by pp.ProductID
+
+--4
+select name, reviewerName, comments
+from Production.Product pp
+join Production.ProductReview ppr
+on pp.ProductID = ppr.ProductID
+
+--5
+select Quantity, pp.ProductID, name 
+from Production.ProductInventory ppi
+join Production.Product pp
+on ppi.ProductID = pp.ProductID
+order by Quantity
+
+--6
+select Quantity, shelf, bin, pl.Name as locationName, pp.ProductID, pp.name as productName 
+from Production.ProductInventory ppi
+join Production.Product pp
+on ppi.ProductID = pp.ProductID
+join Production.Location pl
+on ppi.LocationID = pl.LocationID
+order by Quantity
+
+--7
+select sum(Quantity) as total, name 
+from Production.ProductInventory pp
+join Production.Location pl
+on pp.LocationID = pl.LocationID
+group by name
+
+--8
+select pp.name as ProductName, pps.Name as SubcategoryName, pp.ListPrice, ppc.Name as CategoryName
+from Production.Product pp
+join Production.ProductSubcategory pps
+on pp.ProductSubcategoryID = pps.ProductSubcategoryID
+join Production.ProductCategory ppc
+on pps.ProductCategoryID = ppc.ProductCategoryID
+where ppc.Name = 'bikes'
+order by ListPrice
+
+--9
+select name, listprice
+from Production.Product
+where ListPrice > (select avg(listPrice) as avgp from Production.Product)
+
+--10
+select name, reorderpoint, total
+from Production.Product pp
+join 
+(select productID, sum(Quantity) as total 
+from Production.ProductInventory
+group by ProductID) as totalCalc
+on pp.ProductID = totalCalc.ProductID
+where ReorderPoint > total
