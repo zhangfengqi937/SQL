@@ -31,7 +31,7 @@ select * from Part
 order by Description;
 
 -- 3
-select Class, Description, Onhand, Price
+select Class, Description, Onhand, Price 
 from Part
 order by Class, Description;
 
