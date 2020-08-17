@@ -1,0 +1,92 @@
+--PK can be any type
+--must be consistent across all PK to FK relationships
+--everything after the datatype are constraints
+--constraints are rules on the field
+--check constraints validate data before they are saved
+--field type check(field vaildData comparision)
+create table studio(
+	studioID smallint primary key,
+	studioName varchar(100) not null,
+	numEmployees smallint check (numEmployees > 0),
+)
+insert into studio values(1, 'Bethesda', 250);
+insert into studio values(2, '343', 15);
+insert into studio values(3, 'Gearbox', 200)
+insert into studio values(4, 'Blizzard', 4560)
+select * from studio
+--identity field will auto number for you
+create table games(
+	gameID int primary key identity,
+	gameName varchar(300) not null,
+	gameDesc varchar(2000),
+	gameRating varchar(4) check(gameRating in ('E', 'E+10', 'T', 'M', 'X')),
+	gameStudio smallint foreign key references studio(studioID) -- give us referential integrity
+)
+--RI ensures that a FK exists in the PK column of the referenced table
+insert into games(gameName, gameDesc, gameRating, gameStudio) 
+values('World of Warcraft', 'The MMORPG to beat', 'T', 4)
+select * from games;
+
+insert into games(gameName, gameDesc, gameRating, gameStudio) 
+values('Borderlands 2', 'Looter Shooter', 'T', 3),
+('Skyrim', 'Big RPG', 'E+10', 1)
+select * from games;
+
+select * from games
+join studio
+on games.gameStudio = studio.studioID
+
+create table userss(
+	userName nvarchar(300) primary key,
+	userFname nvarchar(20),
+	userLname nvarchar(50),
+	userType char(1) check (userType in ('A', 'U', 'G')), --admin, user guest
+	userEnabled char(1) check (userEnabled in ('Y', 'N')) default 'Y'
+)
+insert into userss values('Lee@lee.com', 'Lee', 'Cottrell', 'A', 'Y')
+insert into userss values('Jo@joe.com', 'Joe', 'Blow', 'U', default) --forces SQL to use the default values
+select * from userss
+
+--create the junction table
+--fix PK in GUI or with alter table
+create table reviews(
+	reviewID int primary key identity,  --I prefer an auto count ID over a dual PK
+	userName nvarchar(300) foreign key references userss(userName),
+	gameID int foreign key references games(gameID),
+	review nvarchar(3000) not null,
+	stars tinyint check (stars between 1 and 5)
+)
+--drop table reviews
+insert into reviews(userName, gameID, review, stars)
+values('Lee@lee.com', 1, 'Woot', 5),
+('Lee@lee.com', 2, 'Stairs???', 4)
+
+insert into reviews(userName, gameID, review, stars)
+values('Joe@joe.com', 2, 'Boring', 2)
+
+insert into reviews(userName, gameID, review, stars)
+values('Joe@joe.com', 1, 'Boring', 1)
+
+select * from reviews
+
+select gameName, review
+from games g join reviews r
+on g.gameID = r.gameID
+where g.gameID = 2
+
+select gameName, avg(stars) as stars
+from games g join reviews r
+on g.gameID = r.gameID
+group by gameName
+
+--never delete production tables
+--alter instead
+--add a field
+alter table userss
+add bday date
+--update changes value in a record
+update userss
+set bday = '2002-08-17'
+where username = 'lee@lee.com'
+
+select * from userss
