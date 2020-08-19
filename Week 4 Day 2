@@ -1,0 +1,75 @@
+select top(10) * from author
+
+select trim(authorfirst) + ' ' + trim(authorlast)
+from author
+
+--alter an existing table
+--production database is live - do not play with this database
+--development environment - same data - can play with this database
+--never modify live data until you are SURE you know what you are doing
+--will make a copy of data to alter, practice on the copy
+--when ready do it live
+
+--Author
+--live query
+--copy from backup and replace all first
+alter table author
+alter column authorfirst varchar(20)
+
+alter table author
+alter column authorlast varchar(30)
+
+--lose the spaces IN the field
+update author
+set AuthorFirst = trim(authorfirst)
+
+update author
+set AuthorLast = trim(authorlast)
+
+--select * from author
+alter table author
+add website varchar(200)
+
+--add new column website and add one
+update author
+set website = 'https://www.britannica.com/biography/Toni-Morrison'
+where AuthorNum = 1
+
+update author
+set website = 'search https://www.google.com for ' + AuthorLast
+where website is null
+
+select * from author
+
+--Book
+--Live query
+--copy from backup and replace all first
+alter table book
+alter column title varchar(40) not null
+
+update book
+set title = trim(title)
+
+insert into book values('badb', 'bad', 'TB', 'FIC', 'Y')
+select * from bookcopy
+--how can you find books in book not in bookcopy
+select * from book full outer join bookcopy on book.BookCode = bookcopy.bookcode
+where bookcopy.bookcode is null
+
+select title from book
+except 
+select title from bookcopy
+
+delete from book
+where title = 'bad'
+
+--CRUD
+--create read update delete
+--DDL = Data Definition Language
+--create table, update table...
+--working with databases, tables, columns
+
+--DML - Data Manipulation Language
+--insert, update, delete
+--change contents of fields or records
+
